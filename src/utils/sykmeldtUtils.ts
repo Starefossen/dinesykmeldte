@@ -41,6 +41,10 @@ export function sortByName(a: PreviewSykmeldtFragment, b: PreviewSykmeldtFragmen
     return a.navn.localeCompare(b.navn);
 }
 
+export function sortByOrgName(a: PreviewSykmeldtFragment, b: PreviewSykmeldtFragment): number {
+    return a.orgnavn.localeCompare(b.orgnavn);
+}
+
 export function notificationCount(sykmeldt: PreviewSykmeldtFragment): number {
     const sykmeldinger = sykmeldt.sykmeldinger.filter((it) => !it.lest).length;
     const soknader = sykmeldt.previewSoknader.filter((it) => isPreviewSoknadNotification(it)).length;

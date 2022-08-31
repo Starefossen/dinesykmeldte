@@ -3,3 +3,8 @@
     margin-bottom: var(--navds-spacing-6);
     border-bottom: 1px solid var(--navds-panel-color-border);
 }
+
+.orgnavn:global(.navds-heading--xsmall) {
+    margin-top: var(--navds-spacing-2);
+    margin-bottom: var(--navds-spacing-7);
+}

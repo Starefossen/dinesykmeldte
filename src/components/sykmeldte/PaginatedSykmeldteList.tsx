@@ -10,13 +10,15 @@ import paginationSlice, { PAGE_SIZE_KEY } from '../../state/paginationSlice';
 
 import { useExpanded, useExpandSykmeldte } from './useExpandSykmeldte';
 import styles from './PaginatedSykmeldteList.module.css';
+import { OrgHeading } from './SykmeldteList';
 
 type Props = {
     sykmeldte: PreviewSykmeldtFragment[];
     focusSykmeldtId: string | null;
+    showOrgHeading: boolean;
 };
 
-function PaginatedSykmeldteList({ sykmeldte, focusSykmeldtId }: Props): JSX.Element {
+function PaginatedSykmeldteList({ sykmeldte, focusSykmeldtId, showOrgHeading }: Props): JSX.Element {
     const { expandedSykmeldte, expandedSykmeldtPerioder } = useExpanded();
     const handleSykmeldtClick = useExpandSykmeldte(focusSykmeldtId, expandedSykmeldte);
     const page = useSelector((state: RootState) => state.pagination.page);
@@ -45,12 +47,13 @@ function PaginatedSykmeldteList({ sykmeldte, focusSykmeldtId }: Props): JSX.Elem
                 className={cn({ [styles.paginatedSection]: shouldPaginate })}
             >
                 <Grid>
-                    {list.map((it, index) => (
+                    {list.map((it, index, arr) => (
                         <Cell
                             ref={index === list.length - 1 ? lastItemRef : undefined}
                             key={it.narmestelederId}
                             xs={12}
                         >
+                            {showOrgHeading && <OrgHeading sykmeldte={arr} sykmeldt={it} />}
                             <ExpandableSykmeldtPanel
                                 sykmeldt={it}
                                 notification={false}

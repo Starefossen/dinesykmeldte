@@ -17,7 +17,13 @@ export function useFilterChangeHandlers(): UseFilterChangeHandlers {
     );
     const handleShowChange = useCallback(
         (show: string) => {
-            if (show !== 'all' && show !== 'sykmeldte' && show !== 'friskmeldte')
+            if (
+                show !== 'all' &&
+                show !== 'sykmeldte' &&
+                show !== 'sykmeldte-per-virksomhet' &&
+                show !== 'friskmeldte' &&
+                show !== 'graderte'
+            )
                 throw Error(`Invalid show value (${show ?? '[Missing]'})`);
 
             dispatch(filterSlice.actions.setShow(show));

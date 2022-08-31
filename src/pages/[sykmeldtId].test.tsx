@@ -6,6 +6,7 @@ import mockRouter from 'next-router-mock';
 import { render, screen } from '../utils/test/testUtils';
 import {
     createAktivitetIkkeMuligPeriode,
+    createGradertPeriode,
     createInitialQuery,
     createSykmelding,
     createPreviewSykmeldt,
@@ -317,7 +318,7 @@ describe('Index page', () => {
             it('should filter by friskmeldt when changing "Vis" to friskmeldt', async () => {
                 setup(sykmeldte);
 
-                await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Vis' }), ['Friskmeldte']);
+                await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Vis' }), ['Tidligere sykmeldte']);
 
                 await waitFor(() => expect(screen.getByRole('combobox', { name: 'Vis' })).toHaveValue('friskmeldte'));
 
@@ -327,6 +328,169 @@ describe('Index page', () => {
                         .slice(2)
                         .map((it) => it.textContent),
                 ).toEqual(['Frisky A.', 'Frisky B.']);
+            });
+
+            it('should filter by graderte when changing "Vis" to Graderte', async () => {
+                const sykmeldte = [
+                    createPreviewSykmeldt({ fnr: '1', navn: 'Frisky A.' }),
+                    createPreviewSykmeldt({
+                        fnr: '2',
+                        navn: 'Sicky A.',
+                        sykmeldinger: [
+                            createSykmelding({
+                                id: 'sykmelding-1',
+                                perioder: [createGradertPeriode({ grad: 20, fom: '2021-07-15', tom: '2021-07-28' })],
+                            }),
+                        ],
+                    }),
+                    createPreviewSykmeldt({
+                        fnr: '3',
+                        navn: 'Sicky B.',
+                        sykmeldinger: [
+                            createSykmelding({
+                                id: 'sykmelding-1',
+                                perioder: [createGradertPeriode({ grad: 50, fom: '2022-04-01', tom: '2022-05-15' })],
+                            }),
+                        ],
+                    }),
+                    createPreviewSykmeldt({ fnr: '4', navn: 'Sicky C.' }),
+                    createPreviewSykmeldt({ fnr: '5', navn: 'Frisky B.' }),
+                ];
+
+                setup(sykmeldte);
+
+                await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Vis' }), ['Graderte']);
+
+                await waitFor(() => expect(screen.getByRole('combobox', { name: 'Vis' })).toHaveValue('graderte'));
+
+                expect(
+                    screen
+                        .getAllByRole('heading')
+                        .slice(2)
+                        .map((it) => it.textContent),
+                ).toEqual(['Sicky A.', 'Sicky B.']);
+            });
+
+            describe('filter sykmeldte-per-virksomhet', () => {
+                const sykmeldte = [
+                    createPreviewSykmeldt({
+                        fnr: '1',
+                        navn: 'Frisky A.',
+                        orgnummer: '123456789',
+                        orgnavn: 'Bedrift AS',
+                        friskmeldt: false,
+                        sykmeldinger: [
+                            createSykmelding({
+                                id: 'sykmelding-1',
+                                perioder: [createAktivitetIkkeMuligPeriode({ fom: '2021-06-14', tom: '2021-07-12' })],
+                            }),
+                        ],
+                    }),
+                    createPreviewSykmeldt({
+                        fnr: '2',
+                        navn: 'Sicky A.',
+                        orgnummer: '432532223',
+                        orgnavn: 'Firma AS',
+                        friskmeldt: false,
+                        sykmeldinger: [
+                            createSykmelding({
+                                id: 'sykmelding-2',
+                                perioder: [createAktivitetIkkeMuligPeriode({ fom: '2022-04-01', tom: '2022-04-13' })],
+                            }),
+                        ],
+                    }),
+                    createPreviewSykmeldt({
+                        fnr: '4',
+                        navn: 'Sicky C.',
+                        orgnummer: '123456789',
+                        orgnavn: 'Bedrift AS',
+                        friskmeldt: false,
+                        sykmeldinger: [
+                            createSykmelding({
+                                id: 'sykmelding-4',
+                                perioder: [createAktivitetIkkeMuligPeriode({ fom: '2022-06-11', tom: '2022-06-20' })],
+                            }),
+                        ],
+                    }),
+                    createPreviewSykmeldt({
+                        fnr: '3',
+                        navn: 'Sicky B.',
+                        orgnummer: '123456789',
+                        orgnavn: 'Bedrift AS',
+                        friskmeldt: false,
+                        sykmeldinger: [
+                            createSykmelding({
+                                id: 'sykmelding-3',
+                                perioder: [createAktivitetIkkeMuligPeriode({ fom: '2022-08-10', tom: '2022-08-20' })],
+                            }),
+                        ],
+                    }),
+                    createPreviewSykmeldt({
+                        fnr: '5',
+                        navn: 'Frisky B.',
+                        orgnummer: '964432212',
+                        orgnavn: 'Virksomhet AS',
+                        friskmeldt: true,
+                    }),
+                ];
+
+                it('should filter sykmeldte and sort them by virksomhet then by date when changing "Vis" to Sykmeldte per virksomhet', async () => {
+                    setup(sykmeldte);
+
+                    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Vis' }), [
+                        'Sykmeldte per virksomhet',
+                    ]);
+
+                    await waitFor(() =>
+                        expect(screen.getByRole('combobox', { name: 'Vis' })).toHaveValue('sykmeldte-per-virksomhet'),
+                    );
+
+                    expect(
+                        screen
+                            .getAllByRole('heading')
+                            .slice(2)
+                            .map((it) => it.textContent),
+                    ).toEqual(['Bedrift AS', 'Sicky B.', 'Sicky C.', 'Frisky A.', 'Firma AS', 'Sicky A.']);
+                });
+
+                it('should only display orgnavn as heading once if there is more than one sykmeldt per org', async () => {
+                    setup(sykmeldte);
+
+                    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Vis' }), [
+                        'Sykmeldte per virksomhet',
+                    ]);
+
+                    await waitFor(() =>
+                        expect(screen.getByRole('combobox', { name: 'Vis' })).toHaveValue('sykmeldte-per-virksomhet'),
+                    );
+
+                    expect(screen.getAllByRole('heading', { name: 'Bedrift AS' })).toHaveLength(1);
+                    expect(screen.getAllByRole('heading', { name: 'Firma AS' })).toHaveLength(1);
+                    expect(screen.queryByRole('heading', { name: 'Virksomhet AS' })).not.toBeInTheDocument();
+                });
+
+                it('should filter sykmeldte and sort them by virksomhet then by name when changing "Sorter etter" to Navn', async () => {
+                    setup(sykmeldte);
+
+                    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Vis' }), [
+                        'Sykmeldte per virksomhet',
+                    ]);
+                    await waitFor(() =>
+                        expect(screen.getByRole('combobox', { name: 'Vis' })).toHaveValue('sykmeldte-per-virksomhet'),
+                    );
+
+                    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Sorter etter' }), ['Navn']);
+                    await waitFor(() =>
+                        expect(screen.getByRole('combobox', { name: 'Sorter etter' })).toHaveValue('name'),
+                    );
+
+                    expect(
+                        screen
+                            .getAllByRole('heading')
+                            .slice(2)
+                            .map((it) => it.textContent),
+                    ).toEqual(['Bedrift AS', 'Frisky A.', 'Sicky B.', 'Sicky C.', 'Firma AS', 'Sicky A.']);
+                });
             });
         });
     });

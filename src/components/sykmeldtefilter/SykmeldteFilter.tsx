@@ -29,7 +29,7 @@ const SykmeldteFilter = (): JSX.Element => {
                 <Cell xs={12} className={styles.virksomhetsPicker}>
                     <VirksomhetPicker />
                 </Cell>
-                <Cell xs={12} md={6} className={styles.filterInputCell}>
+                <Cell xs={12} md={4} className={styles.filterInputCell}>
                     <TextField
                         hideLabel
                         label=""
@@ -40,7 +40,7 @@ const SykmeldteFilter = (): JSX.Element => {
                         onChange={(event) => handleNameFilterChange(event.target.value)}
                     />
                 </Cell>
-                <Cell xs={6} md={3}>
+                <Cell xs={6} md={5}>
                     <Select
                         className={styles.visSelect}
                         label="Vis"
@@ -49,7 +49,9 @@ const SykmeldteFilter = (): JSX.Element => {
                     >
                         <option value="all">Alle</option>
                         <option value="sykmeldte">Sykmeldte</option>
-                        <option value="friskmeldte">Friskmeldte</option>
+                        <option value="sykmeldte-per-virksomhet">Sykmeldte per virksomhet</option>
+                        <option value="friskmeldte">Tidligere sykmeldte</option>
+                        <option value="graderte">Graderte</option>
                     </Select>
                 </Cell>
                 <Cell xs={6} md={3}>

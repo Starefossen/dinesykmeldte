@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 export interface FilterState {
     virksomhet: 'all' | string | null;
     name: string | null;
-    show: 'all' | 'sykmeldte' | 'friskmeldte';
+    show: 'all' | 'sykmeldte' | 'sykmeldte-per-virksomhet' | 'friskmeldte' | 'graderte';
     sortBy: 'date' | 'name';
     dirty: boolean;
 }

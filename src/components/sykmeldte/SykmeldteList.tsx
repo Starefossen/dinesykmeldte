@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 import { Cell, Grid, Heading } from '@navikt/ds-react';
 import cn from 'classnames';
 import { useQuery } from '@apollo/client';
-import { batch, useDispatch } from 'react-redux';
+import { batch, useDispatch, useSelector } from 'react-redux';
 
-import { MineSykmeldteDocument } from '../../graphql/queries/graphql.generated';
+import { MineSykmeldteDocument, PreviewSykmeldtFragment } from '../../graphql/queries/graphql.generated';
 import { partition } from '../../utils/tsUtils';
 import { notificationCount } from '../../utils/sykmeldtUtils';
 import ExpandableSykmeldtPanel from '../shared/SykmeldtPanel/ExpandableSykmeldtPanel';
@@ -16,6 +16,7 @@ import expandedSlice from '../../state/expandedSlice';
 import filterSlice from '../../state/filterSlice';
 import useFocusRefetch from '../../hooks/useFocusRefetch';
 import { previewNySoknaderRead } from '../../utils/soknadUtils';
+import { RootState } from '../../state/store';
 
 import useFilteredSykmeldte from './useFilteredSykmeldte';
 import PaginatedSykmeldteList from './PaginatedSykmeldteList';
@@ -26,6 +27,9 @@ function SykmeldteList(): JSX.Element {
     const { loading, data, error, refetch } = useQuery(MineSykmeldteDocument);
     const { sykmeldtId: focusSykmeldtId } = useParam(RouteLocation.Root);
     const dispatch = useDispatch();
+
+    const filter = useSelector((state: RootState) => state.filter);
+    const showOrgHeading = filter.show === 'sykmeldte-per-virksomhet';
 
     useFocusRefetch(refetch);
 
@@ -75,8 +79,9 @@ function SykmeldteList(): JSX.Element {
                         Nye varsler
                     </Heading>
                     <Grid>
-                        {notifying.map((it) => (
+                        {notifying.map((it, _, arr) => (
                             <Cell key={it.fnr} xs={12}>
+                                {showOrgHeading && <OrgHeading sykmeldte={arr} sykmeldt={it} />}
                                 <ExpandableSykmeldtPanel
                                     sykmeldt={it}
                                     notification
@@ -87,8 +92,9 @@ function SykmeldteList(): JSX.Element {
                                 />
                             </Cell>
                         ))}
-                        {notSendtSoknader.map((it) => (
+                        {notSendtSoknader.map((it, _, arr) => (
                             <Cell key={it.fnr} xs={12}>
+                                {showOrgHeading && <OrgHeading sykmeldte={arr} sykmeldt={it} />}
                                 <ExpandableSykmeldtPanel
                                     sykmeldt={it}
                                     notification={false}
@@ -104,11 +110,42 @@ function SykmeldteList(): JSX.Element {
             )}
             {nonNotifying.length > 0 && (
                 <section aria-label="Sykmeldte uten varsel">
-                    <PaginatedSykmeldteList sykmeldte={nonNotifying} focusSykmeldtId={focusSykmeldtId} />
+                    <PaginatedSykmeldteList
+                        sykmeldte={nonNotifying}
+                        focusSykmeldtId={focusSykmeldtId}
+                        showOrgHeading={showOrgHeading}
+                    />
                 </section>
             )}
         </ErrorBoundary>
     );
+}
+
+export function OrgHeading({
+    sykmeldte,
+    sykmeldt,
+}: {
+    sykmeldte: PreviewSykmeldtFragment[];
+    sykmeldt: PreviewSykmeldtFragment;
+}): JSX.Element | null {
+    const listOfOrgnames: string[] = [];
+    let orgname: string | null = null;
+
+    sykmeldte.forEach((it) => {
+        if (!listOfOrgnames.includes(it.orgnavn)) {
+            listOfOrgnames.push(it.orgnavn);
+            it.fnr === sykmeldt.fnr ? (orgname = it.orgnavn) : null;
+        }
+    });
+
+    if (orgname) {
+        return (
+            <Heading className={styles.orgnavn} size="xsmall" level="3" spacing>
+                {orgname}
+            </Heading>
+        );
+    }
+    return null;
 }
 
 export default SykmeldteList;
