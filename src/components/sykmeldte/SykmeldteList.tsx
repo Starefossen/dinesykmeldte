@@ -3,6 +3,7 @@ import { Cell, Grid, Heading } from '@navikt/ds-react';
 import cn from 'classnames';
 import { useQuery } from '@apollo/client';
 import { batch, useDispatch, useSelector } from 'react-redux';
+import { groupBy } from 'remeda';
 
 import { MineSykmeldteDocument, PreviewSykmeldtFragment } from '../../graphql/queries/graphql.generated';
 import { partition } from '../../utils/tsUtils';
@@ -66,6 +67,9 @@ function SykmeldteList(): JSX.Element {
         notifyingAndNotSendtSoknader,
     );
 
+    const notSendtSoknaderGrouped = groupBy(notSendtSoknader, (it) => (showOrgHeading ? it.orgnavn : 'default'));
+    const notifyingGrouped = groupBy(notifying, (it) => (showOrgHeading ? it.orgnavn : 'default'));
+
     return (
         <ErrorBoundary>
             {notifyingAndNotSendtSoknader.length > 0 && (
@@ -79,32 +83,36 @@ function SykmeldteList(): JSX.Element {
                         Nye varsler
                     </Heading>
                     <Grid>
-                        {notifying.map((it, _, arr) => (
-                            <Cell key={it.fnr} xs={12}>
-                                {showOrgHeading && <OrgHeading sykmeldte={arr} sykmeldt={it} />}
-                                <ExpandableSykmeldtPanel
-                                    sykmeldt={it}
-                                    notification
-                                    expanded={expandedSykmeldte.includes(it.narmestelederId)}
-                                    periodsExpanded={expandedSykmeldtPerioder.includes(it.narmestelederId)}
-                                    onClick={handleSykmeldtClick}
-                                    focusSykmeldtId={focusSykmeldtId}
-                                />
-                            </Cell>
-                        ))}
-                        {notSendtSoknader.map((it, _, arr) => (
-                            <Cell key={it.fnr} xs={12}>
-                                {showOrgHeading && <OrgHeading sykmeldte={arr} sykmeldt={it} />}
-                                <ExpandableSykmeldtPanel
-                                    sykmeldt={it}
-                                    notification={false}
-                                    expanded={expandedSykmeldte.includes(it.narmestelederId)}
-                                    periodsExpanded={expandedSykmeldtPerioder.includes(it.narmestelederId)}
-                                    onClick={handleSykmeldtClick}
-                                    focusSykmeldtId={focusSykmeldtId}
-                                />
-                            </Cell>
-                        ))}
+                        {Object.entries(notifyingGrouped).map(([group, items]) =>
+                            items.map((it, index) => (
+                                <Cell key={it.fnr} xs={12}>
+                                    {group !== 'default' && index === 0 && <OrgHeading orgname={group} />}
+                                    <ExpandableSykmeldtPanel
+                                        sykmeldt={it}
+                                        notification
+                                        expanded={expandedSykmeldte.includes(it.narmestelederId)}
+                                        periodsExpanded={expandedSykmeldtPerioder.includes(it.narmestelederId)}
+                                        onClick={handleSykmeldtClick}
+                                        focusSykmeldtId={focusSykmeldtId}
+                                    />
+                                </Cell>
+                            )),
+                        )}
+                        {Object.entries(notSendtSoknaderGrouped).map(([group, items]) =>
+                            items.map((it, index) => (
+                                <Cell key={it.fnr} xs={12}>
+                                    {group !== 'default' && index === 0 && <OrgHeading orgname={group} />}
+                                    <ExpandableSykmeldtPanel
+                                        sykmeldt={it}
+                                        notification={false}
+                                        expanded={expandedSykmeldte.includes(it.narmestelederId)}
+                                        periodsExpanded={expandedSykmeldtPerioder.includes(it.narmestelederId)}
+                                        onClick={handleSykmeldtClick}
+                                        focusSykmeldtId={focusSykmeldtId}
+                                    />
+                                </Cell>
+                            )),
+                        )}
                     </Grid>
                 </section>
             )}
@@ -121,31 +129,12 @@ function SykmeldteList(): JSX.Element {
     );
 }
 
-export function OrgHeading({
-    sykmeldte,
-    sykmeldt,
-}: {
-    sykmeldte: PreviewSykmeldtFragment[];
-    sykmeldt: PreviewSykmeldtFragment;
-}): JSX.Element | null {
-    const listOfOrgnames: string[] = [];
-    let orgname: string | null = null;
-
-    sykmeldte.forEach((it) => {
-        if (!listOfOrgnames.includes(it.orgnavn)) {
-            listOfOrgnames.push(it.orgnavn);
-            it.fnr === sykmeldt.fnr ? (orgname = it.orgnavn) : null;
-        }
-    });
-
-    if (orgname) {
-        return (
-            <Heading className={styles.orgnavn} size="xsmall" level="3" spacing>
-                {orgname}
-            </Heading>
-        );
-    }
-    return null;
+export function OrgHeading({ orgname }: { orgname: string }): JSX.Element {
+    return (
+        <Heading className={styles.orgnavn} size="xsmall" level="3" spacing>
+            {orgname}
+        </Heading>
+    );
 }
 
 export default SykmeldteList;

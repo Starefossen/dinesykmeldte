@@ -1,4 +1,4 @@
-import { Cell, Grid, Pagination, Select } from '@navikt/ds-react';
+import { Cell, Grid, Heading, Pagination, Select } from '@navikt/ds-react';
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import cn from 'classnames';
@@ -10,6 +10,7 @@ import paginationSlice, { PAGE_SIZE_KEY } from '../../state/paginationSlice';
 
 import { useExpanded, useExpandSykmeldte } from './useExpandSykmeldte';
 import styles from './PaginatedSykmeldteList.module.css';
+import { groupBy } from 'remeda';
 import { OrgHeading } from './SykmeldteList';
 
 type Props = {
@@ -19,6 +20,7 @@ type Props = {
 };
 
 function PaginatedSykmeldteList({ sykmeldte, focusSykmeldtId, showOrgHeading }: Props): JSX.Element {
+    const dispatch = useDispatch();
     const { expandedSykmeldte, expandedSykmeldtPerioder } = useExpanded();
     const handleSykmeldtClick = useExpandSykmeldte(focusSykmeldtId, expandedSykmeldte);
     const page = useSelector((state: RootState) => state.pagination.page);
@@ -27,8 +29,7 @@ function PaginatedSykmeldteList({ sykmeldte, focusSykmeldtId, showOrgHeading }: 
     const list = !shouldPaginate ? sykmeldte : chunkSykmeldte(sykmeldte, page, pageSize);
     const lastItemRef = useScrollLastItemIntoViewIfOutOfViewport(shouldPaginate);
     const focusSykmeldtIndex = sykmeldte.findIndex((it) => it.narmestelederId === focusSykmeldtId);
-
-    const dispatch = useDispatch();
+    const grouped = Object.entries(groupBy(list, (it) => (showOrgHeading ? it.orgnavn : 'default')));
 
     useEffect(() => {
         if (!focusSykmeldtId || focusSykmeldtIndex === -1) return;
@@ -47,23 +48,29 @@ function PaginatedSykmeldteList({ sykmeldte, focusSykmeldtId, showOrgHeading }: 
                 className={cn({ [styles.paginatedSection]: shouldPaginate })}
             >
                 <Grid>
-                    {list.map((it, index, arr) => (
-                        <Cell
-                            ref={index === list.length - 1 ? lastItemRef : undefined}
-                            key={it.narmestelederId}
-                            xs={12}
-                        >
-                            {showOrgHeading && <OrgHeading sykmeldte={arr} sykmeldt={it} />}
-                            <ExpandableSykmeldtPanel
-                                sykmeldt={it}
-                                notification={false}
-                                expanded={expandedSykmeldte.includes(it.narmestelederId)}
-                                periodsExpanded={expandedSykmeldtPerioder.includes(it.narmestelederId)}
-                                onClick={handleSykmeldtClick}
-                                focusSykmeldtId={focusSykmeldtId}
-                            />
-                        </Cell>
-                    ))}
+                    {grouped.map(([group, items], groupIndex) =>
+                        items.map((it, index) => (
+                            <Cell
+                                ref={
+                                    groupIndex === grouped.length - 1 && index === list.length - 1
+                                        ? lastItemRef
+                                        : undefined
+                                }
+                                key={it.narmestelederId}
+                                xs={12}
+                            >
+                                {group !== 'default' && index === 0 && <OrgHeading orgname={group} />}
+                                <ExpandableSykmeldtPanel
+                                    sykmeldt={it}
+                                    notification={false}
+                                    expanded={expandedSykmeldte.includes(it.narmestelederId)}
+                                    periodsExpanded={expandedSykmeldtPerioder.includes(it.narmestelederId)}
+                                    onClick={handleSykmeldtClick}
+                                    focusSykmeldtId={focusSykmeldtId}
+                                />
+                            </Cell>
+                        )),
+                    )}
                 </Grid>
             </section>
             <PageSizeSelector />
