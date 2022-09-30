@@ -10,7 +10,7 @@ import {
     isPreviewSoknadNotification,
     soknadByDateDesc,
 } from '../../../utils/soknadUtils';
-import { cleanId } from '../../../utils/stringUtils';
+import { cleanIda } from '../../../utils/stringUtils';
 
 import SoknadModalContent from './soknadmodal/SoknadModalContent';
 import SoknadTag from './SoknadTag';
@@ -26,9 +26,9 @@ function SoknaderListSection({ title, soknader, sykmeldtId }: Props): JSX.Elemen
     if (soknader.length === 0) return null;
 
     return (
-        <section aria-labelledby={`soknader-list-${cleanId(title)}-header`} className={styles.sectionRoot}>
+        <section aria-labelledby={`soknader-list-${cleanIda(title)}-header`} className={styles.sectionRoot}>
             <Heading
-                id={`soknader-list-${cleanId(title)}-header`}
+                id={`soknader-list-${cleanIda(title)}-header`}
                 size="medium"
                 level="2"
                 className={styles.listHeader}

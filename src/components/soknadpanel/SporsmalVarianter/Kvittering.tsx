@@ -2,7 +2,7 @@ import React from 'react';
 import { Heading } from '@navikt/ds-react';
 import { z } from 'zod';
 
-import { cleanId } from '../../../utils/stringUtils';
+import { cleanIda } from '../../../utils/stringUtils';
 import { notNull } from '../../../utils/tsUtils';
 import CheckboxExplanation from '../../shared/checkboxexplanation/CheckboxExplanation';
 import { SoknadSporsmalSvarFragment } from '../../../graphql/queries/graphql.generated';
@@ -42,7 +42,7 @@ function getSvarText(svarList: SoknadSporsmalSvarFragment[]): string {
 function Kvittering({ sporsmal }: SporsmalVarianterProps): JSX.Element | null {
     if (!sporsmal.svar || sporsmal.svar.length === 0) return null;
 
-    const listItemId = cleanId(sporsmal.id);
+    const listItemId = cleanIda(sporsmal.id);
     const svarList = sporsmal.svar as SoknadSporsmalSvarFragment[];
 
     return (

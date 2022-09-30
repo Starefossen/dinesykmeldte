@@ -1,7 +1,7 @@
 import React from 'react';
 import { BodyShort, Heading } from '@navikt/ds-react';
 
-import { cleanId } from '../../../utils/stringUtils';
+import { cleanIda } from '../../../utils/stringUtils';
 
 import { SporsmalVarianterProps } from './SporsmalVarianter';
 import SporsmalListItem from './shared/SporsmalListItem';
@@ -9,7 +9,7 @@ import SporsmalListItem from './shared/SporsmalListItem';
 function Fritekst({ sporsmal }: SporsmalVarianterProps): JSX.Element | null {
     if (!sporsmal.svar || !sporsmal.svar[0]) return null;
 
-    const listItemId = cleanId(sporsmal.id);
+    const listItemId = cleanIda(sporsmal.id);
 
     return (
         <SporsmalListItem listItemId={listItemId}>

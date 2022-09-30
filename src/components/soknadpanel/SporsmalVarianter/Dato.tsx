@@ -1,7 +1,7 @@
 import React from 'react';
 import { BodyShort, Heading } from '@navikt/ds-react';
 
-import { cleanId } from '../../../utils/stringUtils';
+import { cleanIda } from '../../../utils/stringUtils';
 import { formatDate } from '../../../utils/dateUtils';
 import { notNull } from '../../../utils/tsUtils';
 
@@ -13,7 +13,7 @@ import SporsmalListItemNested from './shared/SporsmalListItemNested';
 function Dato({ sporsmal }: SporsmalVarianterProps): JSX.Element | null {
     if (!sporsmal.svar || sporsmal.svar.length === 0) return null;
 
-    const listItemId = cleanId(sporsmal.id);
+    const listItemId = cleanIda(sporsmal.id);
 
     return (
         <SporsmalListItem listItemId={listItemId}>
@@ -22,7 +22,7 @@ function Dato({ sporsmal }: SporsmalVarianterProps): JSX.Element | null {
             </Heading>
             <SporsmalList>
                 {sporsmal.svar.filter(notNull).map((svar) => {
-                    const svarId = cleanId(svar.verdi);
+                    const svarId = cleanIda(svar.verdi);
                     return (
                         <SporsmalListItemNested key={svarId}>
                             <BodyShort size="small">{formatDate(svar.verdi)}</BodyShort>

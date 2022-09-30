@@ -1,7 +1,7 @@
 import React from 'react';
 import { BodyShort, Heading } from '@navikt/ds-react';
 
-import { cleanId } from '../../../utils/stringUtils';
+import { cleanIda } from '../../../utils/stringUtils';
 import { getSoknadTallLabel } from '../../../utils/soknadUtils';
 import { notNull } from '../../../utils/tsUtils';
 import { SoknadSporsmalSvartypeEnum } from '../../../graphql/queries/graphql.generated';
@@ -14,7 +14,7 @@ import SporsmalListItemNested from './shared/SporsmalListItemNested';
 function Tall({ sporsmal }: SporsmalVarianterProps): JSX.Element | null {
     if (!sporsmal.svar || !sporsmal.svar[0]) return null;
 
-    const listItemId = cleanId(sporsmal.id);
+    const listItemId = cleanIda(sporsmal.id);
     const label = sporsmal.undertekst || getSoknadTallLabel(sporsmal);
 
     return (
@@ -24,7 +24,7 @@ function Tall({ sporsmal }: SporsmalVarianterProps): JSX.Element | null {
             </Heading>
             <SporsmalList>
                 {sporsmal.svar.filter(notNull).map((svar) => {
-                    const svarId = cleanId(svar.verdi);
+                    const svarId = cleanIda(svar.verdi);
                     let verdi = svar.verdi;
 
                     if (sporsmal.svartype === SoknadSporsmalSvartypeEnum.Belop) {

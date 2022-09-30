@@ -1,7 +1,7 @@
 import { BodyShort, Heading } from '@navikt/ds-react';
 import React from 'react';
 
-import { cleanId } from '../../../utils/stringUtils';
+import { cleanIda } from '../../../utils/stringUtils';
 
 import styles from './ListItem.module.css';
 
@@ -12,7 +12,7 @@ interface ListItemProps {
 }
 
 export function ListItem({ title, text, headingLevel }: ListItemProps): JSX.Element {
-    const listItemId = cleanId(title);
+    const listItemId = cleanIda(title);
 
     return (
         <li className={styles.root} aria-labelledby={listItemId}>

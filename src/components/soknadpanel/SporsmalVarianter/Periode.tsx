@@ -2,7 +2,7 @@ import React from 'react';
 import { BodyShort, Heading } from '@navikt/ds-react';
 import { z } from 'zod';
 
-import { cleanId } from '../../../utils/stringUtils';
+import { cleanIda } from '../../../utils/stringUtils';
 import { notNull } from '../../../utils/tsUtils';
 import { formatDateRange } from '../../../utils/dateUtils';
 import { DateSchema } from '../../../services/minesykmeldte/schema/common';
@@ -20,7 +20,7 @@ const PeriodeSvarSchema = z.object({
 function Periode({ sporsmal }: SporsmalVarianterProps): JSX.Element | null {
     if (!sporsmal.svar || sporsmal.svar.length === 0) return null;
 
-    const listItemId = cleanId(sporsmal.id);
+    const listItemId = cleanIda(sporsmal.id);
 
     return (
         <SporsmalListItem listItemId={listItemId}>
@@ -29,7 +29,7 @@ function Periode({ sporsmal }: SporsmalVarianterProps): JSX.Element | null {
             </Heading>
             <SporsmalList>
                 {sporsmal.svar.filter(notNull).map((svar) => {
-                    const svarId = cleanId(svar.verdi);
+                    const svarId = cleanIda(svar.verdi);
                     const dates = PeriodeSvarSchema.parse(JSON.parse(svar.verdi));
                     return (
                         <SporsmalListItemNested key={svarId}>

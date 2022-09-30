@@ -1,4 +1,4 @@
-export function cleanId(title: string): string {
+export function cleanIda(title: string): string {
     return title.replace(/\W/g, '_');
 }
 

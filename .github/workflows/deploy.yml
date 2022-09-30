@@ -148,7 +148,7 @@ jobs:
           VAR: image=${{ env.docker_image }},version=${{ github.sha }}
 
   deploy-to-load-test:
-    name: deploy to nais demo
+    name: deploy to prod load test app
     needs: [build]
     runs-on: ubuntu-latest
     steps:

@@ -1,8 +1,8 @@
-import { cleanId } from './stringUtils';
+import { cleanIda } from './stringUtils';
 
 describe('cleanId', () => {
     it('should clean normal text', () => {
-        expect(cleanId('Hello yes this is normal text. Some punctuation?')).toEqual(
+        expect(cleanIda('Hello yes this is normal text. Some punctuation?')).toEqual(
             'Hello_yes_this_is_normal_text__Some_punctuation_',
         );
     });

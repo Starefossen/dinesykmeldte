@@ -1,7 +1,7 @@
 import React from 'react';
 import { Heading } from '@navikt/ds-react';
 
-import { cleanId } from '../../../utils/stringUtils';
+import { cleanIda } from '../../../utils/stringUtils';
 import { SoknadSporsmalFragment } from '../../../graphql/queries/graphql.generated';
 
 import { SporsmalVarianterProps } from './SporsmalVarianter';
@@ -12,7 +12,7 @@ function CheckboxGruppe({ sporsmal }: SporsmalVarianterProps): JSX.Element | nul
 
     if (!undersporsmal || undersporsmal?.length === 0) return null;
 
-    const listItemId = cleanId(sporsmal.id);
+    const listItemId = cleanIda(sporsmal.id);
 
     return (
         <li aria-labelledby={listItemId}>

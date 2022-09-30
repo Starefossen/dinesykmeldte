@@ -2,7 +2,7 @@ import React from 'react';
 import { BodyShort, Heading } from '@navikt/ds-react';
 
 import { formatDate, formatDatePeriod } from '../../../utils/dateUtils';
-import { cleanId } from '../../../utils/stringUtils';
+import { cleanIda } from '../../../utils/stringUtils';
 import CheckboxExplanation from '../../shared/checkboxexplanation/CheckboxExplanation';
 import { SoknadSporsmalSvarFragment } from '../../../graphql/queries/graphql.generated';
 import { notNull } from '../../../utils/tsUtils';
@@ -22,7 +22,7 @@ const datoEllerIkkeTilBehandling = (svar: SoknadSporsmalSvarFragment): string =>
 function Behandlingsdager({ sporsmal }: SporsmalVarianterProps): JSX.Element | null {
     if (!sporsmal.undersporsmal || sporsmal.undersporsmal?.length === 0) return null;
 
-    const listItemId = cleanId(sporsmal.id);
+    const listItemId = cleanIda(sporsmal.id);
 
     return (
         <SporsmalListItem listItemId={listItemId}>
@@ -31,7 +31,7 @@ function Behandlingsdager({ sporsmal }: SporsmalVarianterProps): JSX.Element | n
             </Heading>
             <SporsmalList>
                 {sporsmal.undersporsmal.filter(notNull).map((underspm) => {
-                    const undersporsmalId = cleanId(underspm.id);
+                    const undersporsmalId = cleanIda(underspm.id);
                     return (
                         <SporsmalListItemNested listItemId={undersporsmalId} key={undersporsmalId}>
                             {underspm.min && underspm.max && (

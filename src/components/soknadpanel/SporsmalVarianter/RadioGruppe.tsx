@@ -3,7 +3,7 @@ import { Heading } from '@navikt/ds-react';
 
 import { SoknadSporsmalFragment, SoknadSporsmalSvartypeEnum } from '../../../graphql/queries/graphql.generated';
 import CheckboxExplanation from '../../shared/checkboxexplanation/CheckboxExplanation';
-import { cleanId } from '../../../utils/stringUtils';
+import { cleanIda } from '../../../utils/stringUtils';
 import { notNull } from '../../../utils/tsUtils';
 
 import { SporsmalVarianterProps, PossibleSvarEnum } from './SporsmalVarianter';
@@ -13,7 +13,7 @@ import SporsmalListItem from './shared/SporsmalListItem';
 function RadioGruppe({ sporsmal }: SporsmalVarianterProps): JSX.Element | null {
     if (!sporsmal.undersporsmal || sporsmal.undersporsmal.length === 0) return null;
 
-    const listItemId = cleanId(sporsmal.id);
+    const listItemId = cleanIda(sporsmal.id);
 
     const besvartUndersporsmal = sporsmal.undersporsmal.filter(notNull).find((underspm) => {
         return underspm.svar && underspm.svar[0] && underspm.svar[0].verdi === PossibleSvarEnum.CHECKED;

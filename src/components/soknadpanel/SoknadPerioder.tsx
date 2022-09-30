@@ -4,7 +4,7 @@ import { BodyShort, Heading } from '@navikt/ds-react';
 import { SoknadperiodeFragment } from '../../graphql/queries/graphql.generated';
 import { formatDatePeriod } from '../../utils/dateUtils';
 import { getSoknadSykmeldingPeriodDescription } from '../../utils/soknadUtils';
-import { cleanId } from '../../utils/stringUtils';
+import { cleanIda } from '../../utils/stringUtils';
 
 import styles from './SoknadPerioder.module.css';
 
@@ -13,7 +13,7 @@ interface Props {
 }
 
 function SoknadPerioder({ perioder }: Props): JSX.Element {
-    const listItemId = cleanId('Søknaden gjelder for perioden');
+    const listItemId = cleanIda('Søknaden gjelder for perioden');
 
     return (
         <li className={styles.soknadPeriode} aria-labelledby={listItemId}>

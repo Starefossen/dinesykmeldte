@@ -2,7 +2,7 @@ import React from 'react';
 import { Heading } from '@navikt/ds-react';
 import parser from 'html-react-parser';
 
-import { cleanId } from '../../../utils/stringUtils';
+import { cleanIda } from '../../../utils/stringUtils';
 
 import { SporsmalVarianterProps } from './SporsmalVarianter';
 import SporsmalListItem from './shared/SporsmalListItem';
@@ -11,7 +11,7 @@ import styles from './Undertekst.module.css';
 function Undertekst({ sporsmal }: SporsmalVarianterProps): JSX.Element | null {
     if (!sporsmal.undertekst) return null;
 
-    const listItemId = cleanId(sporsmal.id);
+    const listItemId = cleanIda(sporsmal.id);
 
     return (
         <SporsmalListItem listItemId={listItemId}>

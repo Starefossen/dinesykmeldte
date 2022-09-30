@@ -2,7 +2,7 @@ import React from 'react';
 import { Heading } from '@navikt/ds-react';
 
 import { SoknadSporsmalFragment } from '../../../graphql/queries/graphql.generated';
-import { capitalizeFirstLetterOnly, cleanId } from '../../../utils/stringUtils';
+import { capitalizeFirstLetterOnly, cleanIda } from '../../../utils/stringUtils';
 import CheckboxExplanation from '../../shared/checkboxexplanation/CheckboxExplanation';
 import { notNull } from '../../../utils/tsUtils';
 
@@ -25,7 +25,7 @@ const erUndersporsmalStilt = (sporsmal: SoknadSporsmalFragment): boolean => {
 function JaEllerNei({ sporsmal }: SporsmalVarianterProps): JSX.Element | null {
     if (!sporsmal.svar || !sporsmal.svar[0]) return null;
 
-    const listItemId = cleanId(sporsmal.id);
+    const listItemId = cleanIda(sporsmal.id);
     const undersporsmal = sporsmal.undersporsmal as SoknadSporsmalFragment[];
 
     return (
