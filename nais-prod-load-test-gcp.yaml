@@ -1,0 +1,34 @@
+apiVersion: 'nais.io/v1alpha1'
+kind: 'Application'
+metadata:
+  name: dinesykmeldte-debug
+  namespace: teamsykmelding
+  labels:
+    team: teamsykmelding
+spec:
+  image: {{image}}
+  port: 3000
+  ingresses:
+    - 'https://www.nav.no/syk/debug-please-disregard'
+  replicas:
+    min: 2
+    max: 3
+    cpuThresholdPercentage: 50
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 512Mi
+  liveness:
+    path: /syk/debug-please-disregard/api/internal/is_alive
+  readiness:
+    path: /syk/debug-please-disregard/api/internal/is_ready
+  env:
+    - name: NEXT_PUBLIC_BASE_PATH
+      value: /syk/debug-please-disregard
+    - name: RUNTIME_ENVIRONMENT
+      value: labs
+    - name: RUNTIME_VERSION
+      value: labs

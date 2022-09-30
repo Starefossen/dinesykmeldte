@@ -6,7 +6,7 @@ env:
   NPM_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
 jobs:
   snyk-monitor:
-    if: github.ref == 'refs/heads/main'
+    if: false
     name: monitor dependencies
     runs-on: ubuntu-latest
     steps:
@@ -21,6 +21,7 @@ jobs:
           args: --org=teamsykmelding --severity-threshold=high
   snyk-test:
     name: analyze dependencies
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -50,8 +51,10 @@ jobs:
       - name: Install yarn dependencies
         run: yarn --immutable
       - name: Lint
+        if: false
         run: yarn lint
       - name: Test
+        if: false
         run: yarn test
       - name: Build app
         run: yarn build
@@ -62,22 +65,24 @@ jobs:
           SENTRY_PROJECT: dinesykmeldte
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       - name: Login GCP dev
+        if: false
         uses: google-github-actions/auth@v0.7.1
         with:
           credentials_json: ${{ secrets.STATIC_FILES_DEV }}
       - name: Upload static files to GCP bucket
+        if: false
         uses: google-github-actions/upload-cloud-storage@v0.10.1
         with:
           path: .next/static
           parent: false
           destination: teamsykmelding-static-files-dev/dinesykmeldte/_next/static
       - name: Login GCP prod
-        if: github.ref == 'refs/heads/main'
+        if: false
         uses: google-github-actions/auth@v0.7.1
         with:
           credentials_json: ${{ secrets.STATIC_FILES_PROD }}
       - name: Upload static files to GCP prod bucket
-        if: github.ref == 'refs/heads/main'
+        if: false
         uses: google-github-actions/upload-cloud-storage@v0.10.1
         with:
           path: .next/static
@@ -101,6 +106,7 @@ jobs:
             "NPM_AUTH_TOKEN=${{ secrets.READER_TOKEN }}"
 
   deploy-to-dev-gcp:
+    if: false
     name: deploy to nais dev
     needs: [snyk-test, build]
     runs-on: ubuntu-latest
@@ -114,7 +120,7 @@ jobs:
           VAR: image=${{ env.docker_image }},version=${{ github.sha }}
 
   deploy-to-labs-gcp:
-    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/labs')
+    if: false
     name: deploy to nais demo
     needs: [snyk-test, build]
     runs-on: ubuntu-latest
@@ -128,7 +134,7 @@ jobs:
           VAR: image=${{ env.docker_image }}
 
   deploy:
-    if: github.ref == 'refs/heads/main'
+    if: false
     name: deploy to nais
     needs: [snyk-test, build]
     runs-on: ubuntu-latest
@@ -140,3 +146,16 @@ jobs:
           CLUSTER: prod-gcp
           RESOURCE: nais-prod-gcp.yaml
           VAR: image=${{ env.docker_image }},version=${{ github.sha }}
+
+  deploy-to-load-test:
+    name: deploy to nais demo
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: prod-gcp
+          RESOURCE: nais-prod-load-test-gcp.yaml
+          VAR: image=${{ env.docker_image }}
