@@ -12,6 +12,7 @@ fragment PreviewSoknad on PreviewSoknad {
     ... on PreviewNySoknad {
         lest
         ikkeSendtSoknadVarsel
+        ikkeSendtSoknadVarsletDato
     }
     ... on PreviewSendtSoknad {
         lest
@@ -22,11 +23,13 @@ fragment PreviewSoknad on PreviewSoknad {
 
 fragment Dialogmote on Dialogmote {
     hendelseId
+    mottatt
     tekst
 }
 
 fragment Oppfolgingsplan on Oppfolgingsplan {
     hendelseId
+    mottatt
     tekst
 }
 

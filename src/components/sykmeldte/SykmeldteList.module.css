@@ -1,5 +1,11 @@
-.notifyingSectionHasFollwingSection {
-    padding-bottom: var(--navds-spacing-6);
-    margin-bottom: var(--navds-spacing-6);
-    border-bottom: 1px solid var(--navds-panel-color-border);
+.virksomhetsPicker {
+    display: none;
+}
+
+@media only screen and (max-width: 720px) {
+    .virksomhetsPicker {
+        display: block;
+        margin-top: var(--navds-spacing-12);
+        margin-bottom: var(--navds-spacing-4);
+    }
 }

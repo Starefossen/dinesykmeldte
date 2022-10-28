@@ -85,6 +85,7 @@ export type Behandlingsdager = FomTom & {
 export type Dialogmote = {
     __typename?: 'Dialogmote'
     hendelseId: Scalars['String']
+    mottatt: Maybe<Scalars['DateTime']>
     tekst: Maybe<Scalars['String']>
 }
 
@@ -125,6 +126,7 @@ export type MutationUnlinkSykmeldtArgs = {
 export type Oppfolgingsplan = {
     __typename?: 'Oppfolgingsplan'
     hendelseId: Scalars['String']
+    mottatt: Maybe<Scalars['DateTime']>
     tekst: Maybe<Scalars['String']>
 }
 
@@ -153,6 +155,7 @@ export type PreviewNySoknad = BasePreviewSoknad & {
     fom: Scalars['Date']
     id: Scalars['String']
     ikkeSendtSoknadVarsel: Scalars['Boolean']
+    ikkeSendtSoknadVarsletDato: Maybe<Scalars['DateTime']>
     lest: Scalars['Boolean']
     perioder: Array<Soknadsperiode>
     status: SoknadsstatusEnum
@@ -713,6 +716,7 @@ export type DialogmoteResolvers<
     ParentType extends ResolversParentTypes['Dialogmote'] = ResolversParentTypes['Dialogmote'],
 > = ResolversObject<{
     hendelseId?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+    mottatt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>
     tekst?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }>
@@ -771,6 +775,7 @@ export type OppfolgingsplanResolvers<
     ParentType extends ResolversParentTypes['Oppfolgingsplan'] = ResolversParentTypes['Oppfolgingsplan'],
 > = ResolversObject<{
     hendelseId?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+    mottatt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>
     tekst?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }>
@@ -806,6 +811,7 @@ export type PreviewNySoknadResolvers<
     fom?: Resolver<ResolversTypes['Date'], ParentType, ContextType>
     id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
     ikkeSendtSoknadVarsel?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>
+    ikkeSendtSoknadVarsletDato?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>
     lest?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>
     perioder?: Resolver<Array<ResolversTypes['Soknadsperiode']>, ParentType, ContextType>
     status?: Resolver<ResolversTypes['SoknadsstatusEnum'], ParentType, ContextType>

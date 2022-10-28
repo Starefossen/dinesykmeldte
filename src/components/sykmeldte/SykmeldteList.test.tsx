@@ -17,7 +17,6 @@ import {
     createPreviewSykmeldt,
     createVirksomhet,
 } from '../../utils/test/dataCreators'
-import VirksomhetPicker from '../virksomhetpicker/VirksomhetPicker'
 
 import SykmeldteList from './SykmeldteList'
 
@@ -34,7 +33,6 @@ describe('SykmeldteList', () => {
     ): void {
         render(
             <>
-                <VirksomhetPicker />
                 <SykmeldteList />
             </>,
             {
@@ -171,7 +169,7 @@ describe('SykmeldteList', () => {
             createInitialQuery(MineSykmeldteDocument, { __typename: 'Query', mineSykmeldte: sykmeldte }),
         ])
 
-        const notifyingSection = within(screen.getByRole('region', { name: 'Nye varsler' }))
+        const notifyingSection = within(screen.getByRole('region', { name: 'Varslinger' }))
         expect(notifyingSection.getAllByRole('button')).toHaveLength(1)
         expect(notifyingSection.getByRole('button', { name: /Mr. Notifying/ })).toBeInTheDocument()
 

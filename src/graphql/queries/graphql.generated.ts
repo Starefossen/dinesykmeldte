@@ -81,6 +81,7 @@ export type Behandlingsdager = FomTom & {
 export type Dialogmote = {
     __typename: 'Dialogmote'
     hendelseId: Scalars['String']
+    mottatt?: Maybe<Scalars['DateTime']>
     tekst?: Maybe<Scalars['String']>
 }
 
@@ -121,6 +122,7 @@ export type MutationUnlinkSykmeldtArgs = {
 export type Oppfolgingsplan = {
     __typename: 'Oppfolgingsplan'
     hendelseId: Scalars['String']
+    mottatt?: Maybe<Scalars['DateTime']>
     tekst?: Maybe<Scalars['String']>
 }
 
@@ -149,6 +151,7 @@ export type PreviewNySoknad = BasePreviewSoknad & {
     fom: Scalars['Date']
     id: Scalars['String']
     ikkeSendtSoknadVarsel: Scalars['Boolean']
+    ikkeSendtSoknadVarsletDato?: Maybe<Scalars['DateTime']>
     lest: Scalars['Boolean']
     perioder: Array<Soknadsperiode>
     status: SoknadsstatusEnum
@@ -971,6 +974,7 @@ export type PreviewSoknad_PreviewNySoknad_Fragment = {
     tom: string
     lest: boolean
     ikkeSendtSoknadVarsel: boolean
+    ikkeSendtSoknadVarsletDato?: string | null
     perioder: Array<{
         __typename: 'Soknadsperiode'
         fom: string
@@ -1003,9 +1007,19 @@ export type PreviewSoknadFragment =
     | PreviewSoknad_PreviewNySoknad_Fragment
     | PreviewSoknad_PreviewSendtSoknad_Fragment
 
-export type DialogmoteFragment = { __typename: 'Dialogmote'; hendelseId: string; tekst?: string | null }
+export type DialogmoteFragment = {
+    __typename: 'Dialogmote'
+    hendelseId: string
+    mottatt?: string | null
+    tekst?: string | null
+}
 
-export type OppfolgingsplanFragment = { __typename: 'Oppfolgingsplan'; hendelseId: string; tekst?: string | null }
+export type OppfolgingsplanFragment = {
+    __typename: 'Oppfolgingsplan'
+    hendelseId: string
+    mottatt?: string | null
+    tekst?: string | null
+}
 
 export type AktivitetsvarselFragment = {
     __typename: 'Aktivitetsvarsel'
@@ -1075,6 +1089,7 @@ export type PreviewSykmeldtFragment = {
               tom: string
               lest: boolean
               ikkeSendtSoknadVarsel: boolean
+              ikkeSendtSoknadVarsletDato?: string | null
               perioder: Array<{
                   __typename: 'Soknadsperiode'
                   fom: string
@@ -1101,14 +1116,19 @@ export type PreviewSykmeldtFragment = {
               }>
           }
     >
-    dialogmoter: Array<{ __typename: 'Dialogmote'; hendelseId: string; tekst?: string | null }>
+    dialogmoter: Array<{ __typename: 'Dialogmote'; hendelseId: string; mottatt?: string | null; tekst?: string | null }>
     aktivitetsvarsler: Array<{
         __typename: 'Aktivitetsvarsel'
         hendelseId: string
         mottatt: string
         lest?: string | null
     }>
-    oppfolgingsplaner: Array<{ __typename: 'Oppfolgingsplan'; hendelseId: string; tekst?: string | null }>
+    oppfolgingsplaner: Array<{
+        __typename: 'Oppfolgingsplan'
+        hendelseId: string
+        mottatt?: string | null
+        tekst?: string | null
+    }>
 }
 
 export type MineSykmeldteQueryVariables = Exact<{ [key: string]: never }>
@@ -1176,6 +1196,7 @@ export type MineSykmeldteQuery = {
                   tom: string
                   lest: boolean
                   ikkeSendtSoknadVarsel: boolean
+                  ikkeSendtSoknadVarsletDato?: string | null
                   perioder: Array<{
                       __typename: 'Soknadsperiode'
                       fom: string
@@ -1202,14 +1223,24 @@ export type MineSykmeldteQuery = {
                   }>
               }
         >
-        dialogmoter: Array<{ __typename: 'Dialogmote'; hendelseId: string; tekst?: string | null }>
+        dialogmoter: Array<{
+            __typename: 'Dialogmote'
+            hendelseId: string
+            mottatt?: string | null
+            tekst?: string | null
+        }>
         aktivitetsvarsler: Array<{
             __typename: 'Aktivitetsvarsel'
             hendelseId: string
             mottatt: string
             lest?: string | null
         }>
-        oppfolgingsplaner: Array<{ __typename: 'Oppfolgingsplan'; hendelseId: string; tekst?: string | null }>
+        oppfolgingsplaner: Array<{
+            __typename: 'Oppfolgingsplan'
+            hendelseId: string
+            mottatt?: string | null
+            tekst?: string | null
+        }>
     }> | null
 }
 
@@ -1631,6 +1662,7 @@ export const PreviewSoknadFragmentDoc = {
                             selections: [
                                 { kind: 'Field', name: { kind: 'Name', value: 'lest' } },
                                 { kind: 'Field', name: { kind: 'Name', value: 'ikkeSendtSoknadVarsel' } },
+                                { kind: 'Field', name: { kind: 'Name', value: 'ikkeSendtSoknadVarsletDato' } },
                             ],
                         },
                     },
@@ -1662,6 +1694,7 @@ export const DialogmoteFragmentDoc = {
                 kind: 'SelectionSet',
                 selections: [
                     { kind: 'Field', name: { kind: 'Name', value: 'hendelseId' } },
+                    { kind: 'Field', name: { kind: 'Name', value: 'mottatt' } },
                     { kind: 'Field', name: { kind: 'Name', value: 'tekst' } },
                 ],
             },
@@ -1697,6 +1730,7 @@ export const OppfolgingsplanFragmentDoc = {
                 kind: 'SelectionSet',
                 selections: [
                     { kind: 'Field', name: { kind: 'Name', value: 'hendelseId' } },
+                    { kind: 'Field', name: { kind: 'Name', value: 'mottatt' } },
                     { kind: 'Field', name: { kind: 'Name', value: 'tekst' } },
                 ],
             },

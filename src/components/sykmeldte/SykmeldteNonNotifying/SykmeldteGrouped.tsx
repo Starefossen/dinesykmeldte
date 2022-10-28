@@ -2,10 +2,10 @@ import React, { Ref } from 'react'
 import { NonEmptyArray } from 'remeda/dist/commonjs/_types'
 import { Cell } from '@navikt/ds-react'
 
-import { PreviewSykmeldtFragment } from '../../graphql/queries/graphql.generated'
-import ExpandableSykmeldtPanel from '../shared/SykmeldtPanel/ExpandableSykmeldtPanel'
+import { PreviewSykmeldtFragment } from '../../../graphql/queries/graphql.generated'
+import ExpandableSykmeldtPanel from '../../shared/SykmeldtPanel/ExpandableSykmeldtPanel'
+import { useExpanded, useExpandSykmeldte } from '../useExpandSykmeldte'
 
-import { useExpanded, useExpandSykmeldte } from './useExpandSykmeldte'
 import OrgHeading from './OrgHeading'
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
     lastItemRef?: Ref<HTMLDivElement> | undefined
 }
 
-function Sykmeldte({
+function SykmeldteGrouped({
     sykmeldteGrouped,
     focusSykmeldtId,
     notification = false,
@@ -55,4 +55,4 @@ function Sykmeldte({
     )
 }
 
-export default Sykmeldte
+export default SykmeldteGrouped

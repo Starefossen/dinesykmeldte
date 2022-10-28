@@ -1,14 +1,19 @@
 import preloadAll from 'jest-next-dynamic'
 import userEvent from '@testing-library/user-event'
-import { waitFor } from '@testing-library/react'
+import { waitFor, within } from '@testing-library/react'
 import mockRouter from 'next-router-mock'
 
 import { render, screen } from '../utils/test/testUtils'
 import {
     createAktivitetIkkeMuligPeriode,
+    createBeskjeder,
+    createDialogmote,
     createGradertPeriode,
     createInitialQuery,
+    createOppfolgingsplan,
     createSykmelding,
+    createPreviewNySoknad,
+    createPreviewSendtSoknad,
     createPreviewSykmeldt,
     createVirksomhet,
 } from '../utils/test/dataCreators'
@@ -63,7 +68,9 @@ describe('Index page', () => {
             await userEvent.selectOptions(screen.getAllByRole('combobox', { name: 'Velg virksomhet' })[0], 'Right org')
 
             expect(screen.queryByRole('combobox', { name: 'Vis' })).not.toBeInTheDocument()
-            expect(screen.queryByRole('combobox', { name: 'Sorter etter' })).not.toBeInTheDocument()
+            expect(
+                screen.queryByRole('combobox', { name: 'Sorter etter sykmeldte uten varsel' }),
+            ).not.toBeInTheDocument()
         })
 
         it('should display filters when there are 5 or more in an org', async () => {
@@ -80,18 +87,38 @@ describe('Index page', () => {
 
             expect(screen.getByRole('textbox', { name: 'Søk på navn' })).toBeInTheDocument()
             expect(screen.getByRole('combobox', { name: 'Vis' })).toBeInTheDocument()
-            expect(screen.getByRole('combobox', { name: 'Sorter etter' })).toBeInTheDocument()
+            expect(screen.getByRole('combobox', { name: 'Sorter etter sykmeldte uten varsel' })).toBeInTheDocument()
         })
     })
 
-    describe('when the filter changes', () => {
+    describe('when the filter changes for sykmeldte without notifications', () => {
         describe('specifically names', () => {
             const sykmeldte = [
-                createPreviewSykmeldt({ fnr: '1', navn: 'Marcelina Decker' }),
-                createPreviewSykmeldt({ fnr: '2', navn: 'Daanyaal Butler' }),
-                createPreviewSykmeldt({ fnr: '3', navn: 'Kaitlin Dotson' }),
-                createPreviewSykmeldt({ fnr: '4', navn: 'Lacy Carty' }),
-                createPreviewSykmeldt({ fnr: '5', navn: 'Kelly Iles' }),
+                createPreviewSykmeldt({
+                    fnr: '1',
+                    navn: 'Marcelina Decker',
+                    sykmeldinger: [createSykmelding({ lest: true })],
+                }),
+                createPreviewSykmeldt({
+                    fnr: '2',
+                    navn: 'Daanyaal Butler',
+                    sykmeldinger: [createSykmelding({ lest: true })],
+                }),
+                createPreviewSykmeldt({
+                    fnr: '3',
+                    navn: 'Kaitlin Dotson',
+                    sykmeldinger: [createSykmelding({ lest: true })],
+                }),
+                createPreviewSykmeldt({
+                    fnr: '4',
+                    navn: 'Lacy Carty',
+                    sykmeldinger: [createSykmelding({ lest: true })],
+                }),
+                createPreviewSykmeldt({
+                    fnr: '5',
+                    navn: 'Kelly Iles',
+                    sykmeldinger: [createSykmelding({ lest: true })],
+                }),
             ]
 
             it('should filter by name', async () => {
@@ -99,10 +126,13 @@ describe('Index page', () => {
 
                 await userEvent.type(screen.getByRole('textbox', { name: 'Søk på navn' }), 'Kaitlin Dotson')
 
+                const nonNotifyingSection = screen.getByRole('region', { name: 'Sykmeldte uten varsel' })
+                expect(nonNotifyingSection).toBeInTheDocument()
+
                 expect(
                     screen
                         .getAllByRole('heading')
-                        .slice(2)
+                        .slice(1)
                         .map((it) => it.textContent),
                 ).toEqual(['Kaitlin Dotson'])
             })
@@ -115,7 +145,7 @@ describe('Index page', () => {
                 expect(
                     screen
                         .getAllByRole('heading')
-                        .slice(2)
+                        .slice(1)
                         .map((it) => it.textContent),
                 ).toEqual(['Lacy Carty'])
             })
@@ -129,6 +159,7 @@ describe('Index page', () => {
                             createSykmelding({
                                 id: '3',
                                 perioder: [createAktivitetIkkeMuligPeriode({ fom: '2021-02-01', tom: '2021-02-15' })],
+                                lest: true,
                             }),
                         ],
                     }),
@@ -139,6 +170,7 @@ describe('Index page', () => {
                             createSykmelding({
                                 id: '2',
                                 perioder: [createAktivitetIkkeMuligPeriode({ fom: '2021-03-01', tom: '2021-04-01' })],
+                                lest: true,
                             }),
                         ],
                     }),
@@ -149,6 +181,7 @@ describe('Index page', () => {
                             createSykmelding({
                                 id: '1',
                                 perioder: [createAktivitetIkkeMuligPeriode({ fom: '2020-01-01', tom: '2020-01-15' })],
+                                lest: true,
                             }),
                         ],
                     }),
@@ -160,7 +193,7 @@ describe('Index page', () => {
                 expect(
                     screen
                         .getAllByRole('heading')
-                        .slice(2)
+                        .slice(1)
                         .map((it) => it.textContent),
                 ).toEqual(['Karl Borgersson', 'Jarl Garbsson', 'Carl Fergusson'])
             })
@@ -168,18 +201,23 @@ describe('Index page', () => {
             it('should sort by names when changing sort', async () => {
                 setup(sykmeldte)
 
-                await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Sorter etter' }), ['Navn'])
-
-                await waitFor(() => expect(screen.getByRole('combobox', { name: 'Sorter etter' })).toHaveValue('name'))
+                await userEvent.selectOptions(
+                    screen.getByRole('combobox', { name: 'Sorter etter sykmeldte uten varsel' }),
+                    ['Navn'],
+                )
 
                 await waitFor(() =>
-                    expect(
-                        screen
-                            .getAllByRole('heading')
-                            .slice(2)
-                            .map((it) => it.textContent),
-                    ).toEqual(['Daanyaal Butler', 'Kaitlin Dotson', 'Kelly Iles', 'Lacy Carty', 'Marcelina Decker']),
+                    expect(screen.getByRole('combobox', { name: 'Sorter etter sykmeldte uten varsel' })).toHaveValue(
+                        'name',
+                    ),
                 )
+
+                expect(
+                    screen
+                        .getAllByRole('heading')
+                        .slice(1)
+                        .map((it) => it.textContent),
+                ).toEqual(['Daanyaal Butler', 'Kaitlin Dotson', 'Kelly Iles', 'Lacy Carty', 'Marcelina Decker'])
             })
         })
 
@@ -191,6 +229,7 @@ describe('Index page', () => {
                     createSykmelding({
                         id: 'de68eb8f-7484-4363-ad5d-2373e2e3b957',
                         perioder: [createAktivitetIkkeMuligPeriode({ fom: '2012-04-01', tom: '2012-05-01' })],
+                        lest: true,
                     }),
                 ],
             })
@@ -201,6 +240,7 @@ describe('Index page', () => {
                     createSykmelding({
                         id: '5bb36ee6-d068-4294-9612-03409ab6b961',
                         perioder: [createAktivitetIkkeMuligPeriode({ fom: '2012-01-01', tom: '2012-02-01' })],
+                        lest: true,
                     }),
                 ],
             })
@@ -211,6 +251,7 @@ describe('Index page', () => {
                     createSykmelding({
                         id: 'e1715d94-ff12-44f7-b310-fa8e8814da21',
                         perioder: [createAktivitetIkkeMuligPeriode({ fom: '2012-06-01', tom: '2012-07-01' })],
+                        lest: true,
                     }),
                 ],
             })
@@ -219,7 +260,7 @@ describe('Index page', () => {
             expect(
                 screen
                     .getAllByRole('heading')
-                    .slice(2)
+                    .slice(1)
                     .map((it) => it.textContent),
             ).toEqual(['Last', 'Middle', 'First'])
         })
@@ -233,6 +274,7 @@ describe('Index page', () => {
                         createSykmelding({
                             id: '1',
                             perioder: [createAktivitetIkkeMuligPeriode({ tom: '2021-09-02' })],
+                            lest: true,
                         }),
                     ],
                 }),
@@ -243,6 +285,7 @@ describe('Index page', () => {
                         createSykmelding({
                             id: '2',
                             perioder: [createAktivitetIkkeMuligPeriode({ tom: '2021-09-03' })],
+                            lest: true,
                         }),
                     ],
                 }),
@@ -253,6 +296,7 @@ describe('Index page', () => {
                         createSykmelding({
                             id: '3',
                             perioder: [createAktivitetIkkeMuligPeriode({ tom: '2021-09-01' })],
+                            lest: true,
                         }),
                     ],
                 }),
@@ -263,6 +307,7 @@ describe('Index page', () => {
                         createSykmelding({
                             id: '4',
                             perioder: [createAktivitetIkkeMuligPeriode({ tom: '2021-09-05' })],
+                            lest: true,
                         }),
                     ],
                 }),
@@ -273,32 +318,63 @@ describe('Index page', () => {
                         createSykmelding({
                             id: '5',
                             perioder: [createAktivitetIkkeMuligPeriode({ tom: '2021-09-04' })],
+                            lest: true,
                         }),
                     ],
                 }),
             ])
 
-            await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Sorter etter' }), ['Dato'])
-
-            await waitFor(() => expect(screen.getByRole('combobox', { name: 'Sorter etter' })).toHaveValue('date'))
+            await userEvent.selectOptions(
+                screen.getByRole('combobox', { name: 'Sorter etter sykmeldte uten varsel' }),
+                ['Dato'],
+            )
 
             await waitFor(() =>
-                expect(
-                    screen
-                        .getAllByRole('heading')
-                        .slice(2)
-                        .map((it) => it.textContent),
-                ).toEqual(['Fifth', 'Fourth', 'Third', 'Second', 'First']),
+                expect(screen.getByRole('combobox', { name: 'Sorter etter sykmeldte uten varsel' })).toHaveValue(
+                    'date',
+                ),
             )
+
+            expect(
+                screen
+                    .getAllByRole('heading')
+                    .slice(1)
+                    .map((it) => it.textContent),
+            ).toEqual(['Fifth', 'Fourth', 'Third', 'Second', 'First'])
         })
 
-        describe('spesifically "vis" filter', () => {
+        describe('spesifically "vis" filter, for sykmeldte without notifications', () => {
             const sykmeldte = [
-                createPreviewSykmeldt({ fnr: '1', navn: 'Frisky A.', friskmeldt: true }),
-                createPreviewSykmeldt({ fnr: '2', navn: 'Sicky A.', friskmeldt: false }),
-                createPreviewSykmeldt({ fnr: '3', navn: 'Sicky B.', friskmeldt: false }),
-                createPreviewSykmeldt({ fnr: '5', navn: 'Frisky B.', friskmeldt: true }),
-                createPreviewSykmeldt({ fnr: '4', navn: 'Sicky C.', friskmeldt: false }),
+                createPreviewSykmeldt({
+                    fnr: '1',
+                    navn: 'Frisky A.',
+                    friskmeldt: true,
+                    sykmeldinger: [createSykmelding({ lest: true })],
+                }),
+                createPreviewSykmeldt({
+                    fnr: '2',
+                    navn: 'Sicky A.',
+                    friskmeldt: false,
+                    sykmeldinger: [createSykmelding({ lest: true })],
+                }),
+                createPreviewSykmeldt({
+                    fnr: '3',
+                    navn: 'Sicky B.',
+                    friskmeldt: false,
+                    sykmeldinger: [createSykmelding({ lest: true })],
+                }),
+                createPreviewSykmeldt({
+                    fnr: '5',
+                    navn: 'Frisky B.',
+                    friskmeldt: true,
+                    sykmeldinger: [createSykmelding({ lest: true })],
+                }),
+                createPreviewSykmeldt({
+                    fnr: '4',
+                    navn: 'Sicky C.',
+                    friskmeldt: false,
+                    sykmeldinger: [createSykmelding({ lest: true })],
+                }),
             ]
 
             it('should filter by sykmeldt when changing "Vis" to sykmeldt', async () => {
@@ -310,7 +386,7 @@ describe('Index page', () => {
                 expect(
                     screen
                         .getAllByRole('heading')
-                        .slice(2)
+                        .slice(1)
                         .map((it) => it.textContent),
                 ).toEqual(['Sicky A.', 'Sicky B.', 'Sicky C.'])
             })
@@ -325,14 +401,18 @@ describe('Index page', () => {
                 expect(
                     screen
                         .getAllByRole('heading')
-                        .slice(2)
+                        .slice(1)
                         .map((it) => it.textContent),
                 ).toEqual(['Frisky A.', 'Frisky B.'])
             })
 
             it('should filter by graderte when changing "Vis" to Graderte', async () => {
                 const sykmeldte = [
-                    createPreviewSykmeldt({ fnr: '1', navn: 'Frisky A.' }),
+                    createPreviewSykmeldt({
+                        fnr: '1',
+                        navn: 'Frisky A.',
+                        sykmeldinger: [createSykmelding({ lest: true })],
+                    }),
                     createPreviewSykmeldt({
                         fnr: '2',
                         navn: 'Sicky A.',
@@ -340,6 +420,7 @@ describe('Index page', () => {
                             createSykmelding({
                                 id: 'sykmelding-1',
                                 perioder: [createGradertPeriode({ grad: 20, fom: '2021-07-15', tom: '2021-07-28' })],
+                                lest: true,
                             }),
                         ],
                     }),
@@ -350,11 +431,20 @@ describe('Index page', () => {
                             createSykmelding({
                                 id: 'sykmelding-1',
                                 perioder: [createGradertPeriode({ grad: 50, fom: '2022-04-01', tom: '2022-05-15' })],
+                                lest: true,
                             }),
                         ],
                     }),
-                    createPreviewSykmeldt({ fnr: '4', navn: 'Sicky C.' }),
-                    createPreviewSykmeldt({ fnr: '5', navn: 'Frisky B.' }),
+                    createPreviewSykmeldt({
+                        fnr: '4',
+                        navn: 'Sicky C.',
+                        sykmeldinger: [createSykmelding({ lest: true })],
+                    }),
+                    createPreviewSykmeldt({
+                        fnr: '5',
+                        navn: 'Frisky B.',
+                        sykmeldinger: [createSykmelding({ lest: true })],
+                    }),
                 ]
 
                 setup(sykmeldte)
@@ -366,7 +456,7 @@ describe('Index page', () => {
                 expect(
                     screen
                         .getAllByRole('heading')
-                        .slice(2)
+                        .slice(1)
                         .map((it) => it.textContent),
                 ).toEqual(['Sicky A.', 'Sicky B.'])
             })
@@ -383,6 +473,7 @@ describe('Index page', () => {
                             createSykmelding({
                                 id: 'sykmelding-1',
                                 perioder: [createAktivitetIkkeMuligPeriode({ fom: '2021-06-14', tom: '2021-07-12' })],
+                                lest: true,
                             }),
                         ],
                     }),
@@ -396,6 +487,7 @@ describe('Index page', () => {
                             createSykmelding({
                                 id: 'sykmelding-2',
                                 perioder: [createAktivitetIkkeMuligPeriode({ fom: '2022-04-01', tom: '2022-04-13' })],
+                                lest: true,
                             }),
                         ],
                     }),
@@ -409,6 +501,7 @@ describe('Index page', () => {
                             createSykmelding({
                                 id: 'sykmelding-4',
                                 perioder: [createAktivitetIkkeMuligPeriode({ fom: '2022-06-11', tom: '2022-06-20' })],
+                                lest: true,
                             }),
                         ],
                     }),
@@ -422,6 +515,7 @@ describe('Index page', () => {
                             createSykmelding({
                                 id: 'sykmelding-3',
                                 perioder: [createAktivitetIkkeMuligPeriode({ fom: '2022-08-10', tom: '2022-08-20' })],
+                                lest: true,
                             }),
                         ],
                     }),
@@ -431,6 +525,7 @@ describe('Index page', () => {
                         orgnummer: '964432212',
                         orgnavn: 'Virksomhet AS',
                         friskmeldt: true,
+                        sykmeldinger: [createSykmelding({ lest: true })],
                     }),
                 ]
 
@@ -448,7 +543,7 @@ describe('Index page', () => {
                     expect(
                         screen
                             .getAllByRole('heading')
-                            .slice(2)
+                            .slice(1)
                             .map((it) => it.textContent),
                     ).toEqual(['Bedrift AS', 'Sicky B.', 'Sicky C.', 'Frisky A.', 'Firma AS', 'Sicky A.'])
                 })
@@ -479,19 +574,201 @@ describe('Index page', () => {
                         expect(screen.getByRole('combobox', { name: 'Vis' })).toHaveValue('sykmeldte-per-virksomhet'),
                     )
 
-                    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Sorter etter' }), ['Navn'])
+                    await userEvent.selectOptions(
+                        screen.getByRole('combobox', { name: 'Sorter etter sykmeldte uten varsel' }),
+                        ['Navn'],
+                    )
                     await waitFor(() =>
-                        expect(screen.getByRole('combobox', { name: 'Sorter etter' })).toHaveValue('name'),
+                        expect(
+                            screen.getByRole('combobox', { name: 'Sorter etter sykmeldte uten varsel' }),
+                        ).toHaveValue('name'),
                     )
 
                     expect(
                         screen
                             .getAllByRole('heading')
-                            .slice(2)
+                            .slice(1)
                             .map((it) => it.textContent),
                     ).toEqual(['Bedrift AS', 'Frisky A.', 'Sicky B.', 'Sicky C.', 'Firma AS', 'Sicky A.'])
                 })
             })
+        })
+    })
+
+    describe('sort by names for sykmeldte with notifications', () => {
+        const sykmeldte = [
+            createPreviewSykmeldt({
+                fnr: '1',
+                navn: 'First Name',
+            }),
+            createPreviewSykmeldt({
+                fnr: '2',
+                navn: 'Fifth Name',
+            }),
+            createPreviewSykmeldt({
+                fnr: '3',
+                navn: 'Second Name',
+            }),
+            createPreviewSykmeldt({
+                fnr: '4',
+                navn: 'Fourth Name',
+            }),
+            createPreviewSykmeldt({
+                fnr: '5',
+                navn: 'Third Name',
+            }),
+        ]
+
+        it('should sort by names when changing to Navn', async () => {
+            setup(sykmeldte)
+
+            await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Sorter etter sykmeldte med varsel' }), [
+                'Navn',
+            ])
+
+            await waitFor(() =>
+                expect(screen.getByRole('combobox', { name: 'Sorter etter sykmeldte med varsel' })).toHaveValue('name'),
+            )
+
+            expect(
+                screen
+                    .getAllByRole('heading')
+                    .slice(2)
+                    .map((it) => it.textContent),
+            ).toEqual(['Fifth Name', 'First Name', 'Fourth Name', 'Second Name', 'Third Name'])
+        })
+
+        it('should show nofifiation text in front', async () => {
+            setup(sykmeldte)
+
+            await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Sorter etter sykmeldte med varsel' }), [
+                'Navn',
+            ])
+
+            await waitFor(() =>
+                expect(screen.getByRole('combobox', { name: 'Sorter etter sykmeldte med varsel' })).toHaveValue('name'),
+            )
+
+            const notifyingSection = within(screen.getByRole('region', { name: 'Varslinger' }))
+            expect(await notifyingSection.findAllByText('Ulest sykmelding')).toHaveLength(5)
+        })
+    })
+
+    describe('sort by latest date for sykmeldte with notifications', () => {
+        const sykmeldte = [
+            createPreviewSykmeldt({
+                fnr: '1',
+                navn: 'Gul Gulrot',
+                sykmeldinger: [
+                    createSykmelding({
+                        id: '1',
+                        lest: false,
+                        sendtTilArbeidsgiverDato: '2021-06-01',
+                    }),
+                ],
+                previewSoknader: [
+                    createPreviewNySoknad({
+                        id: '2',
+                        ikkeSendtSoknadVarsel: true,
+                        ikkeSendtSoknadVarsletDato: '2021-02-05',
+                    }),
+                ],
+            }),
+            createPreviewSykmeldt({
+                fnr: '2',
+                navn: 'Stor Kopp',
+                previewSoknader: [
+                    createPreviewSendtSoknad({
+                        id: '1',
+                        lest: false,
+                        sendtDato: '2022-07-02',
+                    }),
+                ],
+            }),
+            createPreviewSykmeldt({
+                fnr: '3',
+                navn: 'Liten Kake',
+                aktivitetsvarsler: [
+                    createBeskjeder({
+                        hendelseId: '4',
+                        lest: null,
+                        mottatt: '2022-09-12',
+                    }),
+                ],
+                oppfolgingsplaner: [
+                    createOppfolgingsplan({
+                        hendelseId: '6',
+                        mottatt: '2022-11-11',
+                        tekst: 'Oppfølgingsplan venter',
+                    }),
+                ],
+            }),
+            createPreviewSykmeldt({
+                fnr: '5',
+                navn: 'Snerten Kake',
+                dialogmoter: [
+                    createDialogmote({
+                        hendelseId: '5',
+                        mottatt: '2022-04-01',
+                        tekst: 'Innkalling til dialogmøte',
+                    }),
+                ],
+            }),
+        ]
+
+        it('should sort by and show latest date when changing to Nyeste', async () => {
+            setup(sykmeldte)
+
+            await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Sorter etter sykmeldte med varsel' }), [
+                'Nyeste',
+            ])
+
+            await waitFor(() =>
+                expect(screen.getByRole('combobox', { name: 'Sorter etter sykmeldte med varsel' })).toHaveValue(
+                    'latest',
+                ),
+            )
+
+            expect(
+                screen
+                    .getAllByRole('heading')
+                    .slice(2)
+                    .map((it) => it.textContent),
+            ).toEqual([
+                '11. november 2022',
+                'Liten Kake',
+                '2. juli 2022',
+                'Stor Kopp',
+                '1. april 2022',
+                'Snerten Kake',
+                '1. juni 2021',
+                'Gul Gulrot',
+            ])
+        })
+
+        it('should show nofifiation text in front', async () => {
+            setup(sykmeldte)
+            await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Sorter etter sykmeldte med varsel' }), [
+                'Nyeste',
+            ])
+
+            await waitFor(() =>
+                expect(screen.getByRole('combobox', { name: 'Sorter etter sykmeldte med varsel' })).toHaveValue(
+                    'latest',
+                ),
+            )
+
+            const notifyingSection = within(screen.getByRole('region', { name: 'Varslinger' }))
+            expect(await notifyingSection.findByRole('button', { name: /Liten Kake/ })).toHaveTextContent(
+                'Oppfølgingsplan venter',
+            )
+            expect(await notifyingSection.findByRole('button', { name: /Stor Kopp/ })).toHaveTextContent('Sendt søknad')
+            expect(await notifyingSection.findByRole('button', { name: /Snerten Kake/ })).toHaveTextContent(
+                'Innkalling til dialogmøte',
+            )
+            expect(await notifyingSection.findByRole('button', { name: /Gul Gulrot/ })).toHaveTextContent(
+                'Ulest sykmelding',
+            )
         })
     })
 })

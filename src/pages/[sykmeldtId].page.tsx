@@ -9,7 +9,6 @@ import SykmeldteList from '../components/sykmeldte/SykmeldteList'
 import SykmeldteInfoPanel from '../components/SykmeldtInfoPanel/SykmeldteInfoPanel'
 import { withAuthenticatedPage } from '../auth/withAuthentication'
 import { useUpdateBreadcrumbs } from '../hooks/useBreadcrumbs'
-import SykmeldteFilter from '../components/sykmeldtefilter/SykmeldteFilter'
 import NarmestelederInfo from '../components/NarmestelederInfo/NarmestelederInfo'
 import UxSignalsWidget from '../components/UxSignals/UxSignalsWidget'
 import { MineSykmeldteDocument, VirksomheterDocument } from '../graphql/queries/graphql.generated'
@@ -24,7 +23,6 @@ function Home(): JSX.Element {
                 <title>Dine sykmeldte - nav.no</title>
             </Head>
             <SykmeldteInfoPanel />
-            <SykmeldteFilter />
             <SykmeldteList />
             <UxSignalsWidget />
             <NarmestelederInfo />

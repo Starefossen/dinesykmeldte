@@ -1,10 +1,10 @@
 import userEvent from '@testing-library/user-event'
 import { waitFor } from '@testing-library/react'
 
-import { render, screen, within } from '../../utils/test/testUtils'
-import { createPreviewSykmeldt } from '../../utils/test/dataCreators'
-import { PreviewSykmeldtFragment } from '../../graphql/queries/graphql.generated'
-import { range } from '../../utils/tsUtils'
+import { render, screen, within } from '../../../utils/test/testUtils'
+import { createPreviewSykmeldt } from '../../../utils/test/dataCreators'
+import { PreviewSykmeldtFragment } from '../../../graphql/queries/graphql.generated'
+import { range } from '../../../utils/tsUtils'
 
 import PaginatedSykmeldteList from './PaginatedSykmeldteList'
 

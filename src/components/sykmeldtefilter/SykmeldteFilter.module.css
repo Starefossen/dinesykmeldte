@@ -1,5 +1,5 @@
 .root {
-    margin-bottom: var(--navds-spacing-12);
+    margin-bottom: var(--navds-spacing-6);
 }
 
 .filterInput {
@@ -20,17 +20,7 @@
     flex: 1 1 auto;
 }
 
-.virksomhetsPicker {
-    margin-top: var(--navds-spacing-8);
-    display: none;
-}
-
 @media only screen and (max-width: 720px) {
-    .virksomhetsPicker {
-        display: block;
-        margin-bottom: var(--navds-spacing-4);
-    }
-
     .filterInput {
         max-width: unset;
     }

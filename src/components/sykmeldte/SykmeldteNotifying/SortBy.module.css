@@ -1,0 +1,14 @@
+.root {
+    display: flex;
+    margin-top: var(--navds-spacing-6);
+    margin-bottom: var(--navds-spacing-6);
+}
+
+.sortSelect {
+    flex: 1 1 auto;
+    justify-content: end;
+}
+
+.sortSelect :global(.navds-select__container) {
+    width: 10rem;
+}

@@ -68,6 +68,7 @@ export function createPreviewNySoknad(
         tom: '2021-10-20',
         sykmeldingId: 'default-sykmelding-1',
         ikkeSendtSoknadVarsel: false,
+        ikkeSendtSoknadVarsletDato: null,
         lest: false,
         perioder: [],
         ...overrides,
@@ -78,6 +79,7 @@ export function createDialogmote(overrides?: Partial<DialogmoteFragment>): Dialo
     return {
         __typename: 'Dialogmote',
         hendelseId: '41e890b3-a9e4-4246-8ad2-aac208ef9a93',
+        mottatt: '2022-11-10',
         tekst: 'Fake hendelse tekst, hello',
         ...overrides,
     }
@@ -87,6 +89,7 @@ export function createOppfolgingsplan(overrides?: Partial<OppfolgingsplanFragmen
     return {
         __typename: 'Oppfolgingsplan',
         hendelseId: '34b52ff3-befa-4699-90a5-ced6f5093dd0',
+        mottatt: '2022-10-22',
         tekst: 'Fake hendelse tekst, hello',
         ...overrides,
     }
@@ -97,7 +100,7 @@ export function createBeskjeder(overrides?: Partial<AktivitetsvarselFragment>): 
         __typename: 'Aktivitetsvarsel',
         hendelseId: '34b52ff3-befa-4699-90a5-ced6f5093dd0',
         mottatt: '2022-03-01',
-        lest: '2011-03-11',
+        lest: '2022-03-11',
         ...overrides,
     }
 }

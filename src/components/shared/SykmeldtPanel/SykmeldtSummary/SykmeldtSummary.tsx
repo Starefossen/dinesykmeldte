@@ -12,9 +12,10 @@ interface Props {
     sykmeldt: PreviewSykmeldtFragment
     notification: boolean
     notSentSoknad: boolean
+    notifyingText?: string
 }
 
-function SykmeldtSummary({ sykmeldt, notification, notSentSoknad }: Props): JSX.Element {
+function SykmeldtSummary({ sykmeldt, notification, notSentSoknad, notifyingText }: Props): JSX.Element {
     return (
         <div className={cn(styles.accordionListItem)}>
             <SykmeldtIcon sykmeldt={sykmeldt} notification={notification} notSentSoknad={notSentSoknad} />
@@ -23,7 +24,11 @@ function SykmeldtSummary({ sykmeldt, notification, notSentSoknad }: Props): JSX.
                     {sykmeldt.navn}
                 </Heading>
                 <BodyShort>
-                    <SykmeldtPeriodStatus sykmeldt={sykmeldt} />
+                    {(notification || notSentSoknad) && notifyingText ? (
+                        <>{notifyingText}</>
+                    ) : (
+                        <SykmeldtPeriodStatus sykmeldt={sykmeldt} />
+                    )}
                 </BodyShort>
             </div>
         </div>

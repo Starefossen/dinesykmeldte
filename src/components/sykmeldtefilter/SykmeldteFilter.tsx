@@ -3,33 +3,22 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 
 import { logAmplitudeEvent } from '../../amplitude/amplitude'
-import VirksomhetPicker from '../virksomhetpicker/VirksomhetPicker'
 import { RootState } from '../../state/store'
 
 import { useIsMoreThan5SykmeldteInSelectedVirksomhet } from './useIsMoreThan5SykmeldteInSelectedVirksomhet'
 import { useFilterChangeHandlers } from './useFilterChangeHandlers'
 import styles from './SykmeldteFilter.module.css'
 
-const SykmeldteFilter = (): JSX.Element => {
+const SykmeldteFilter = (): JSX.Element | null => {
     const hasMoreThan5InOrg = useIsMoreThan5SykmeldteInSelectedVirksomhet()
     const filter = useSelector((state: RootState) => state.filter)
     const { handleNameFilterChange, handleShowChange, handleSortChange } = useFilterChangeHandlers()
 
-    if (!hasMoreThan5InOrg)
-        return (
-            <Grid>
-                <Cell xs={12} className={styles.virksomhetsPicker}>
-                    <VirksomhetPicker />
-                </Cell>
-            </Grid>
-        )
+    if (!hasMoreThan5InOrg) return null
 
     return (
         <div className={styles.root}>
             <Grid>
-                <Cell xs={12} className={styles.virksomhetsPicker}>
-                    <VirksomhetPicker />
-                </Cell>
                 <Cell xs={12} md={4} className={styles.filterInputCell}>
                     <TextField
                         hideLabel
@@ -65,6 +54,7 @@ const SykmeldteFilter = (): JSX.Element => {
                     <Select
                         className={styles.sortSelect}
                         label="Sorter etter"
+                        aria-label="Sorter etter sykmeldte uten varsel"
                         value={filter.sortBy}
                         onChange={(event) => {
                             handleSortChange(event.target.value)

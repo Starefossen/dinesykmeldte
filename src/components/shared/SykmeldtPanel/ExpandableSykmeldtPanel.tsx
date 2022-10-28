@@ -19,6 +19,7 @@ interface Props {
     onClick: (id: string, where: 'root' | 'periods') => void
     notification: boolean
     focusSykmeldtId: string | null
+    notifyingText?: string
 }
 
 function ExpandableSykmeldtPanel({
@@ -28,6 +29,7 @@ function ExpandableSykmeldtPanel({
     onClick,
     notification,
     focusSykmeldtId,
+    notifyingText,
 }: Props): JSX.Element {
     const ref = useRef<HTMLDivElement | null>(null)
 
@@ -64,6 +66,7 @@ function ExpandableSykmeldtPanel({
                         sykmeldt={sykmeldt}
                         notification={notification}
                         notSentSoknad={notSentSoknaderWarning}
+                        notifyingText={notifyingText}
                     />
                 </Accordion.Header>
                 <Accordion.Content className={styles.accordionContent}>

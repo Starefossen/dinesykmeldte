@@ -4,12 +4,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import cn from 'classnames'
 import { groupBy } from 'remeda'
 
-import { PreviewSykmeldtFragment } from '../../graphql/queries/graphql.generated'
-import { RootState } from '../../state/store'
-import paginationSlice, { PAGE_SIZE_KEY } from '../../state/paginationSlice'
+import { PreviewSykmeldtFragment } from '../../../graphql/queries/graphql.generated'
+import { RootState } from '../../../state/store'
+import paginationSlice, { PAGE_SIZE_KEY } from '../../../state/paginationSlice'
+import { useScrollLastItemIntoViewIfOutOfViewport } from '../useScrollLastItemIntoViewIfOutOfViewport'
 
-import { useScrollLastItemIntoViewIfOutOfViewport } from './useScrollLastItemIntoViewIfOutOfViewport'
-import Sykmeldte from './Sykmeldte'
+import SykmeldteGrouped from './SykmeldteGrouped'
 import styles from './PaginatedSykmeldteList.module.css'
 
 type Props = {
@@ -46,7 +46,7 @@ function PaginatedSykmeldteList({ sykmeldte, focusSykmeldtId, showOrgHeading }: 
                 className={cn({ [styles.paginatedSection]: shouldPaginate })}
             >
                 <Grid>
-                    <Sykmeldte
+                    <SykmeldteGrouped
                         sykmeldteGrouped={sykmeldteGrouped}
                         focusSykmeldtId={focusSykmeldtId}
                         listLength={list.length}

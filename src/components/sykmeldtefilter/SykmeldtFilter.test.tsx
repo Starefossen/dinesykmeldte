@@ -50,7 +50,7 @@ describe('SykmeldtFilter', () => {
 
         const name = screen.getByRole('textbox', { name: 'Søk på navn' })
         const display = screen.getByRole('combobox', { name: 'Vis' })
-        const sortBy = screen.getByRole('combobox', { name: 'Sorter etter' })
+        const sortBy = screen.getByRole('combobox', { name: 'Sorter etter sykmeldte uten varsel' })
 
         await userEvent.type(name, 'Hello Filter')
         await userEvent.selectOptions(display, ['Sykmeldte'])
@@ -59,19 +59,5 @@ describe('SykmeldtFilter', () => {
         expect(name).toHaveValue('Hello Filter')
         expect(display).toHaveValue('sykmeldte')
         expect(sortBy).toHaveValue('name')
-    })
-
-    it('should only render virksomhetspicker whene there are less than 5 in org', async () => {
-        setup([
-            createPreviewSykmeldt({ fnr: '1', orgnummer: '123456789' }),
-            createPreviewSykmeldt({ fnr: '2', orgnummer: '123456789' }),
-            createPreviewSykmeldt({ fnr: '3', orgnummer: '123456789' }),
-            createPreviewSykmeldt({ fnr: '4', orgnummer: '123456789' }),
-        ])
-
-        expect(screen.getByRole('combobox', { name: 'Velg virksomhet' })).toBeInTheDocument()
-        expect(screen.queryByRole('textbox', { name: 'Søk på navn' })).not.toBeInTheDocument()
-        expect(screen.queryByRole('combobox', { name: 'Vis' })).not.toBeInTheDocument()
-        expect(screen.queryByRole('combobox', { name: 'Sorter etter' })).not.toBeInTheDocument()
     })
 })
