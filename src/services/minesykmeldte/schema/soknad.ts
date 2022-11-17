@@ -57,6 +57,7 @@ export type PreviewNySoknadApi = z.infer<typeof PreviewNySoknadSchema>
 export const PreviewNySoknadSchema = BasePreviewSoknadSchema.extend({
     status: z.literal(SoknadsstatusEnum.Ny),
     ikkeSendtSoknadVarsel: z.boolean(),
+    ikkeSendtSoknadVarsletDato: DateTimeSchema.nullable(),
     lest: z.boolean(),
 })
 

@@ -81,6 +81,7 @@ export type Behandlingsdager = FomTom & {
 export type Dialogmote = {
     __typename: 'Dialogmote'
     hendelseId: Scalars['String']
+    mottatt?: Maybe<Scalars['DateTime']>
     tekst?: Maybe<Scalars['String']>
 }
 
@@ -121,6 +122,7 @@ export type MutationUnlinkSykmeldtArgs = {
 export type Oppfolgingsplan = {
     __typename: 'Oppfolgingsplan'
     hendelseId: Scalars['String']
+    mottatt?: Maybe<Scalars['DateTime']>
     tekst?: Maybe<Scalars['String']>
 }
 
@@ -149,6 +151,7 @@ export type PreviewNySoknad = BasePreviewSoknad & {
     fom: Scalars['Date']
     id: Scalars['String']
     ikkeSendtSoknadVarsel: Scalars['Boolean']
+    ikkeSendtSoknadVarsletDato?: Maybe<Scalars['DateTime']>
     lest: Scalars['Boolean']
     perioder: Array<Soknadsperiode>
     status: SoknadsstatusEnum

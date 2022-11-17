@@ -27,6 +27,7 @@ type PreviewNySoknad implements BasePreviewSoknad {
     status: SoknadsstatusEnum!
     perioder: [Soknadsperiode!]!
     ikkeSendtSoknadVarsel: Boolean!
+    ikkeSendtSoknadVarsletDato: DateTime
     lest: Boolean!
 }
 

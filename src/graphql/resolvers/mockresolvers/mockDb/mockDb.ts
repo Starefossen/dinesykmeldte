@@ -412,6 +412,7 @@ export class FakeMockDB {
                 fom: '2022-05-01',
                 tom: '2022-05-14',
                 ikkeSendtSoknadVarsel: true,
+                ikkeSendtSoknadVarsletDato: '2022-06-20',
                 lest: false,
                 perioder: [
                     {
@@ -429,6 +430,7 @@ export class FakeMockDB {
                 fom: '2022-05-09',
                 tom: '2022-05-15',
                 ikkeSendtSoknadVarsel: true,
+                ikkeSendtSoknadVarsletDato: '2022-07-20',
                 lest: false,
                 perioder: [
                     {
@@ -484,6 +486,7 @@ export class FakeMockDB {
                 fom: '2021-11-08',
                 tom: '2021-11-08',
                 ikkeSendtSoknadVarsel: true,
+                ikkeSendtSoknadVarsletDato: '2022-08-20',
                 lest: false,
                 perioder: [
                     {
@@ -577,6 +580,7 @@ export class FakeMockDB {
         'Gul Tomat': [
             {
                 hendelseId: '8f2a96cf-2fe9-40fb-a946-79579538ee3e',
+                mottatt: formatISO(subDays(this._now, 15)),
                 tekst: 'Innkalling til dialogmøte',
             },
         ],
@@ -586,14 +590,17 @@ export class FakeMockDB {
         'Super Nova': [
             {
                 hendelseId: 'f311aee3-9b50-4214-a456-732fb2dcacc0',
+                mottatt: formatISO(subDays(this._now, 10)),
                 tekst: 'Innkalling til dialogmøte',
             },
             {
                 hendelseId: '5146da6c-66fe-4683-b9d6-2a57262e2c2f',
+                mottatt: formatISO(subDays(this._now, 12)),
                 tekst: 'Endring av dialogmøte',
             },
             {
                 hendelseId: '10d0026c-8e8c-47c0-b08a-3ba745469787',
+                mottatt: formatISO(subDays(this._now, 25)),
                 tekst: 'Referat fra dialogmøte',
             },
         ],
@@ -633,14 +640,17 @@ export class FakeMockDB {
         'Super Nova': [
             {
                 hendelseId: '4014c115-b584-43a8-9467-aa609b8b7262',
+                mottatt: formatISO(subDays(this._now, 6)),
                 tekst: 'Dette er en oppfølgingsplan.',
             },
             {
                 hendelseId: '0189afe5-7636-48d9-be95-b0da01a61c6f',
+                mottatt: formatISO(subDays(this._now, 10)),
                 tekst: 'Dette er også en oppfølgingsplan.',
             },
             {
                 hendelseId: '2322ae93-92c2-43a5-b537-92a968e59026',
+                mottatt: formatISO(subDays(this._now, 10)),
                 tekst: 'Også en siste oppfolgingsplan',
             },
         ],
